@@ -26,6 +26,9 @@
           [id label end])))))
 
 (defn- doc-string [slice]
+  ;; Valid Rust raw or ordinary string beginning with {.
+  ;; Restrict to a single raw-string terminator, not an
+  ;; arbitrary .*? across unrelated registry entries.
   (let [raw (locate slice "r##\"{" 0)
         ordinary (locate slice "\"{" 0)
         raw-end (when raw
