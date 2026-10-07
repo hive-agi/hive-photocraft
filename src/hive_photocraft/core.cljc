@@ -55,9 +55,10 @@
    descriptive rather than a machine schema; the engine enforces each command's
    detailed numeric ranges. Never silently coerce an unknown command."
   [catalog id command-id params]
-  (if-let [error (:error (command catalog command-id))]
-    {:error error}
-    (request catalog id "engine.execute" {"command" command-id "params" params})))
+  (cond
+    (:error (command catalog command-id)) (command catalog command-id)
+    (not (map? params)) (refuse :request/params "Supply a JSON object for params (use {} when empty).")
+    :else (request catalog id "engine.execute" {"command" command-id "params" params})))
 
 (defn frame
   "Encode a validated request map as exactly one JSON line."
