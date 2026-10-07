@@ -1,5 +1,9 @@
 {:bad
  {:kind :photocraft/unauthorized, :success false, :methods ["auth"]},
+ :denied
+ {:kind :photocraft/unavailable,
+  :success false,
+  :methods ["auth" "engine.commands"]},
  :oversize
  {:kind :photocraft/unavailable,
   :success false,
@@ -12,4 +16,4 @@
  :success
  {:kind nil, :success true, :methods ["auth" "engine.commands"]},
  :timeout
- {:kind :photocraft/timeout, :success false, :methods ["auth"]}}
+ {:kind :photocraft/timeout, :success false, :methods ["auth" "auth"]}}

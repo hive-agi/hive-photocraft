@@ -25,7 +25,7 @@
                        (swap! seen conj (select-keys auth ["id" "method"]))
                        (case behavior
                          :bad (.println out (json/write-str {"id" "auth" "ok" false "error" "denied"}))
-                         :timeout (Thread/sleep 250)
+                         :timeout (Thread/sleep 750)
                          (do
                            (.println out (json/write-str {"id" "auth" "ok" true}))
                            (let [req (json/read-str (.readLine in))]
@@ -33,6 +33,7 @@
                              (case behavior
                                :skip (do (.println out (json/write-str {"id" 99 "ok" true}))
                                          (.println out (json/write-str {"id" 7 "ok" true "result" {"passed" true}})))
+                               :denied (.println out (json/write-str {"id" 7 "ok" false "error" "unknown method"}))
                                :oversize (.println out (apply str (repeat 300 "x")))
                                :reconnect (when (= 2 (count (filter #(= "auth" (get % "id")) @seen)))
                                             (.println out (json/write-str {"id" 7 "ok" true "result" {"passed" true}})))
@@ -46,24 +47,24 @@
     (try
       (java.nio.file.Files/writeString token-file token (make-array java.nio.file.OpenOption 0))
       (let [result (port/send-request
-                    (socket/socket-transport {:port port :timeout-ms 75 :reply-limit 128
+                    (socket/socket-transport {:port port :timeout-ms 500 :reply-limit 128
                                               :token-ref {:scheme :file :path (str token-file)}})
                     request)]
         {:result result :seen @seen})
       (finally
         (.close listener)
-        (try (deref worker 2000 nil) (catch java.util.concurrent.ExecutionException _ nil))
+        (try (deref worker 2500 nil) (catch java.util.concurrent.ExecutionException _ nil))
         (java.nio.file.Files/deleteIfExists token-file)))))
 
 (deftrifecta socket-exchange-contract #'probe
   {:golden-path "test/golden/socket-exchange.edn"
    :cases {:success :success :bad :bad :skip :skip :oversize :oversize
-           :timeout :timeout :reconnect :reconnect}
+           :timeout :timeout :reconnect :reconnect :denied :denied}
    :xf (fn [{:keys [result seen]}]
          {:kind (get-in result [:error :kind])
           :success (true? (get-in result [:ok "ok"]))
           :methods (mapv #(get % "method") seen)})
-   :gen (gen/elements [:success :bad :skip :oversize :timeout :reconnect])
+   :gen (gen/elements [:success :bad :skip :oversize :timeout :reconnect :denied])
    :pred (fn [{:keys [result seen]}]
            (and (= "auth" (get (first seen) "method"))
                 (or (true? (get-in result [:ok "ok"]))

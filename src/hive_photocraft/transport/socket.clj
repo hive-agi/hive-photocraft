@@ -84,15 +84,24 @@
               (failure :photocraft/unauthorized "Control channel rejected authentication; check the secret reference.")
               (do
                 (write-line! out request request-limit)
-                {:ok (matching-reply! in (get request "id") reply-limit)}))))))))
+                (let [reply (matching-reply! in (get request "id") reply-limit)]
+                  (if (true? (get reply "ok"))
+                    {:ok reply}
+                    {:error {:kind :photocraft/unavailable
+                             :hint "Control method returned an error; inspect app state before retrying an edit."}
+                     :retryable? false}))))))))))
 
 (defn- attempt [config request]
   (try
     (exchange! config request)
     (catch SocketTimeoutException _
-      (failure :photocraft/timeout "Control channel timed out; inspect the app and retry after checking state."))
+      {:error {:kind :photocraft/timeout
+               :hint "Control channel timed out; inspect the app and retry after checking state."}
+       :retryable? true})
     (catch Exception _
-      (failure :photocraft/unavailable "Control channel unavailable or invalid frame; inspect app state before retrying an edit."))))
+      {:error {:kind :photocraft/unavailable
+               :hint "Control channel unavailable or invalid frame; inspect app state before retrying an edit."}
+       :retryable? true})))
 
 (defrecord SocketTransport [config]
   port/ControlTransport
@@ -103,10 +112,10 @@
       (not (try (boolean (local-address (:host config))) (catch Exception _ false)))
       (failure :photocraft/unavailable "Control host must resolve to loopback.")
       :else (let [first-result (attempt config request)]
-              (if (and (:error first-result)
-                       (not= :photocraft/unauthorized (get-in first-result [:error :kind])))
-                (attempt config request)
-                first-result)))))
+              (dissoc (if (:retryable? first-result)
+                        (attempt config request)
+                        first-result)
+                      :retryable?)))))
 
 (defn socket-transport
   "Construct a loopback adapter from a port and a required file or environment secret reference."
