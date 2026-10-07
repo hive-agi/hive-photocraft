@@ -1,0 +1,18 @@
+[package]
+name = "photocraft-cabi"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "JSON C ABI for the Photocraft headless engine"
+
+[lib]
+name = "photocraft"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+photocraft-automation = { path = "/home/klein/PP/hive/clones-ref/photocraft/crates/automation" }
+serde_json = "1"
+
+[dev-dependencies]
+base64 = "0.22"
+libloading = "0.8"
