@@ -4,7 +4,7 @@
    :transport-present? false,
    :version "0.1.0",
    :hint
-   "No control transport is configured. Supply :transport implementing ControlTransport; live TCP and native transports are planned for wave 2."}},
+   "No control transport is configured. Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference."}},
  :unknown
  {:error
   {:kind :tool/unknown,

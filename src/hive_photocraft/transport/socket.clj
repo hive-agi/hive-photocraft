@@ -59,12 +59,14 @@
     (.flush out)))
 
 (defn- matching-reply! [in id limit]
-  (loop []
+  (loop [skipped 0]
+    (when (>= skipped 32)
+      (throw (ex-info "Too many unrelated replies" {})))
     (let [reply (json/read-str (read-line! in limit))]
       (if (= id (get reply "id"))
         (if (boolean? (get reply "ok")) reply
             (throw (ex-info "Malformed response" {})))
-        (recur)))))
+        (recur (inc skipped))))))
 
 (defn- exchange! [{:keys [host port connect-ms timeout-ms request-limit reply-limit token-ref]} request]
   (with-open [socket (doto (Socket.)

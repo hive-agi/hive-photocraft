@@ -1,9 +1,9 @@
 {:absent
  {:result
   {:error
-   {:kind :transport/unavailable,
+   {:kind :photocraft/unavailable,
     :hint
-    "Supply :transport implementing ControlTransport. A live TCP adapter is planned for wave 2."}},
+    "Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference."}},
   :calls []},
  :call
  {:result {:ok {"id" 9, "ok" true, "result" {}}},

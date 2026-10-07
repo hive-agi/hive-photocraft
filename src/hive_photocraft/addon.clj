@@ -24,7 +24,7 @@
         :version "0.1.0"
         :hint (if (:transport config)
                 "Injected control transport is available."
-                "No control transport is configured. Supply :transport implementing ControlTransport; live TCP and native transports are planned for wave 2.")}})
+                "No control transport is configured. Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference.")}})
 
 (defn call
   "Validate one engine command then send it through the injected port exactly once."
@@ -33,8 +33,8 @@
     (cond
       (:error prepared) prepared
       (not (:transport config))
-      (core/refuse :transport/unavailable
-                   "Supply :transport implementing ControlTransport. A live TCP adapter is planned for wave 2.")
+      (core/refuse :photocraft/unavailable
+                   "Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference.")
       :else (transport/send-request (:transport config) (:ok prepared)))))
 
 (defn control
