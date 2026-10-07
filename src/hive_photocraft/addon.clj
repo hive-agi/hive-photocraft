@@ -8,7 +8,8 @@
             [hive-photocraft.transport :as transport]
             [hive-help.core :as help]
             [malli.core :as m]
-            [hive-photocraft.schema :as s]))
+            [hive-photocraft.schema :as s]
+            [hive-photocraft.transport.socket :as socket]))
 
 (defn catalog
   "List the source-extracted engine commands and control methods."
@@ -36,6 +37,16 @@
                    "Supply :transport implementing ControlTransport. A live TCP adapter is planned for wave 2.")
       :else (transport/send-request (:transport config) (:ok prepared)))))
 
+(defn control
+  "Validate a catalogued control method, then send one request via the installed port."
+  [config {:strs [id method params]}]
+  (let [prepared (core/request (inventory/load-catalog) (or id 0) method (or params {}))]
+    (cond
+      (:error prepared) prepared
+      (not (:transport config))
+      (core/refuse :photocraft/unavailable "Supply an authenticated control transport.")
+      :else (transport/send-request (:transport config) (:ok prepared)))))
+
 (defn dispatch
   "Dispatch the sole photocraft tool's closed command vocabulary."
   [config {:strs [command] :as params}]
@@ -43,20 +54,24 @@
     "catalog" (catalog config)
     "doctor" (doctor config)
     "call" (call config params)
+    "control" (control config params)
     (assoc (core/refuse :tool/unknown
-                        "Use photocraft command catalog, doctor or call.")
+                        "Use photocraft command catalog, doctor, call or control.")
            :message (help/unknown-command
                      {:tool "photocraft" :command (str command)
-                      :valid-commands ["catalog" "doctor" "call"]}))))
+                      :valid-commands ["catalog" "doctor" "call" "control"]}))))
+
+(m/=> control [:=> [:cat s/Config map?] s/Envelope])
 
 (defn tool-defs
   "One consolidated host tool; descriptions are not a live transport promise."
   [config]
   [{:name "photocraft"
-    :description "Catalog PhotoCraft commands, diagnose transport, or call an engine command."
+    :description "Catalog PhotoCraft commands, diagnose transport, or call an engine or control method."
     :inputSchema {:type "object"
-                  :properties {"command" {:type "string" :enum ["catalog" "doctor" "call"]}
+                  :properties {"command" {:type "string" :enum ["catalog" "doctor" "call" "control"]}
                                "id" {:type ["integer" "string"]}
+                               "method" {:type "string"}
                                "params" {:type "object"}
                                "engine_command" {:type "string"}}
                   :required ["command"]}
@@ -79,7 +94,13 @@
 (defn addon-ctor
   "Pure constructor, resolved by the hive-addon manifest."
   [config]
-  (->PhotoCraftAddon config))
+  (->PhotoCraftAddon
+   (if (and (:control-port config) (not (:transport config)))
+     (assoc config :transport (socket/socket-transport
+                               {:port (:control-port config)
+                                :host (or (:control-host config) "127.0.0.1")
+                                :token-ref (:token-ref config)}))
+     config)))
 
 (m/=> catalog [:=> [:cat s/Config] s/Envelope])
 (m/=> doctor [:=> [:cat s/Config] s/Envelope])

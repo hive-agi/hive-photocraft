@@ -51,6 +51,16 @@
    :pred #(keyword? (get-in % [:error :kind]))
    :num-tests 20 :mutations [["always-unavailable" (fn [_ _] (core/refuse :transport/unavailable "Supply :transport implementing ControlTransport. A live TCP adapter is planned for wave 2."))]]})
 
+(deftrifecta addon-control-contract #'pc/control
+  {:apply? true :golden-path "test/golden/addon-control.edn"
+   :cases {:absent [{} {"method" "engine.commands" "id" 9 "params" {}}]
+           :unknown [{} {"method" "no.such.method" "id" 9 "params" {}}]
+           :valid [{:transport (stub/stub response)} {"method" "engine.commands" "id" 9 "params" {}}]}
+   :gen (gen/tuple (gen/return {}) (gen/elements [{"method" "engine.commands" "id" 9 "params" {}}
+                                                   {"method" "no.such.method" "id" 9 "params" {}}]))
+   :pred #(keyword? (get-in % [:error :kind])) :num-tests 20
+   :mutations [["always-unknown" (fn [_ _] (core/refuse :method/unknown "Choose a method listed by catalog; run photocraft catalog to see available methods."))]]})
+
 (deftrifecta addon-dispatch-contract #'pc/dispatch
   {:apply? true :golden-path "test/golden/addon-dispatch.edn"
    :cases {:doctor [{} {"command" "doctor"}]

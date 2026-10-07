@@ -1,0 +1,7 @@
+{:file
+ {:host "127.0.0.1",
+  :port 8888,
+  :connect-ms 2000,
+  :timeout-ms 30000,
+  :request-limit 1048576,
+  :reply-limit 8388608}}
