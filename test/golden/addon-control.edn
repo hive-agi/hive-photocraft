@@ -1,0 +1,10 @@
+{:absent
+ {:error
+  {:kind :photocraft/unavailable,
+   :hint "Supply an authenticated control transport."}},
+ :unknown
+ {:error
+  {:kind :method/unknown,
+   :hint
+   "Choose a method listed by catalog; run photocraft catalog to see available methods."}},
+ :valid {:ok {"id" 9, "ok" true, "result" {}}}}

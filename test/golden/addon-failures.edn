@@ -1,8 +1,8 @@
 {:absent
  {:error
-  {:kind :transport/unavailable,
+  {:kind :photocraft/unavailable,
    :hint
-   "Supply :transport implementing ControlTransport. A live TCP adapter is planned for wave 2."}},
+   "Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference."}},
  :fault
  {:error
   {:kind :port/fault,
@@ -14,6 +14,6 @@
  :unknown
  {:error
   {:kind :tool/unknown,
-   :hint "Use photocraft command catalog, doctor or call."},
+   :hint "Use photocraft command catalog, doctor, call or control."},
   :message
-  "Unknown command for `photocraft`: \"surprise\"\n\nAvailable commands:\n  - catalog\n  - doctor\n  - call\n\nHINT: Did you mean `call`, `catalog`, `doctor`?"}}
+  "Unknown command for `photocraft`: \"surprise\"\n\nAvailable commands:\n  - catalog\n  - doctor\n  - call\n  - control\n\nHINT: Did you mean `control`, `call`, `catalog`?"}}
