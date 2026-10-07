@@ -6,7 +6,9 @@
             [hive-photocraft.catalog :as inventory]
             [hive-photocraft.core :as core]
             [hive-photocraft.transport :as transport]
-            [hive-help.core :as help]))
+            [hive-help.core :as help]
+            [malli.core :as m]
+            [hive-photocraft.schema :as s]))
 
 (defn catalog
   "List the source-extracted engine commands and control methods."
@@ -78,3 +80,10 @@
   "Pure constructor, resolved by the hive-addon manifest."
   [config]
   (->PhotoCraftAddon config))
+
+(m/=> catalog [:=> [:cat s/Config] s/Envelope])
+(m/=> doctor [:=> [:cat s/Config] s/Envelope])
+(m/=> call [:=> [:cat s/Config map?] s/Envelope])
+(m/=> dispatch [:=> [:cat s/Config map?] s/Envelope])
+(m/=> tool-defs [:=> [:cat s/Config] [:vector map?]])
+(m/=> addon-ctor [:=> [:cat s/Config] any?])
