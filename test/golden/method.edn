@@ -1,0 +1,6 @@
+{:known {:ok "engine.execute"},
+ :missing
+ {:error
+  {:kind :method/unknown,
+   :hint
+   "Choose a method listed by catalog; run photocraft catalog to see available methods."}}}

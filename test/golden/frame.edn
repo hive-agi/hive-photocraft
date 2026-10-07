@@ -1,0 +1,12 @@
+{:bad-params
+ {:error
+  {:kind :frame/invalid,
+   :hint
+   "Build a request with auth, request or execute before encoding."}},
+ :missing-id
+ {:error
+  {:kind :frame/invalid,
+   :hint
+   "Build a request with auth, request or execute before encoding."}},
+ :valid
+ {:ok "{\"id\":9,\"method\":\"engine.commands\",\"params\":{}}\n"}}

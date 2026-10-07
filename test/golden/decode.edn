@@ -1,0 +1,6 @@
+{:array {:ok [true nil]},
+ :invalid
+ {:error
+  {:kind :json/invalid,
+   :hint "Send a valid JSON value followed by a newline."}},
+ :object {:ok {"a" 1}}}

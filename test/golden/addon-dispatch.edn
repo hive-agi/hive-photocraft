@@ -1,0 +1,13 @@
+{:doctor
+ {:ok
+  {:catalog-present? true,
+   :transport-present? false,
+   :version "0.1.0",
+   :hint
+   "No control transport is configured. Supply :transport implementing ControlTransport; live TCP and native transports are planned for wave 2."}},
+ :unknown
+ {:error
+  {:kind :tool/unknown,
+   :hint "Use photocraft command catalog, doctor or call."},
+  :message
+  "Unknown command for `photocraft`: \"surprise\"\n\nAvailable commands:\n  - catalog\n  - doctor\n  - call\n\nHINT: Did you mean `call`, `catalog`, `doctor`?"}}

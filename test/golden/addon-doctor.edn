@@ -1,0 +1,13 @@
+{:configured
+ {:ok
+  {:catalog-present? true,
+   :transport-present? true,
+   :version "0.1.0",
+   :hint "Injected control transport is available."}},
+ :none
+ {:ok
+  {:catalog-present? true,
+   :transport-present? false,
+   :version "0.1.0",
+   :hint
+   "No control transport is configured. Supply :transport implementing ControlTransport; live TCP and native transports are planned for wave 2."}}}

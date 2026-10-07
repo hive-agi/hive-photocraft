@@ -1,0 +1,3 @@
+{:array {:ok "[true,null,false]\n"},
+ :object {:ok "{\"a\":1}\n"},
+ :text {:ok "\"hello\"\n"}}

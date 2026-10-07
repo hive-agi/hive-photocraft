@@ -1,0 +1,30 @@
+{:call
+ {:reply {:ok {"id" 9, "ok" true, "result" {}}},
+  :calls
+  [{"id" 9,
+    "method" "engine.execute",
+    "params" {"command" "file.new", "params" {"width" 20}}}],
+  :addon-id "hive.photocraft",
+  :tools ["photocraft"],
+  :healthy :ok},
+ :doctor
+ {:reply
+  {:ok
+   {:catalog-present? true,
+    :transport-present? true,
+    :version "0.1.0",
+    :hint "Injected control transport is available."}},
+  :calls [],
+  :addon-id "hive.photocraft",
+  :tools ["photocraft"],
+  :healthy :ok},
+ :invalid
+ {:reply
+  {:error
+   {:kind :command/unknown,
+    :hint
+    "Choose an id listed by catalog; run photocraft catalog to see available commands."}},
+  :calls [],
+  :addon-id "hive.photocraft",
+  :tools ["photocraft"],
+  :healthy :ok}}
