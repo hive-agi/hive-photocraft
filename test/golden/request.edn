@@ -1,0 +1,14 @@
+{:bad-id
+ {:error
+  {:kind :request/id,
+   :hint "Supply a non-negative integer or string request id."}},
+ :bad-method
+ {:error
+  {:kind :method/unknown,
+   :hint
+   "Choose a method listed by catalog; run photocraft catalog to see available methods."}},
+ :bad-params
+ {:error
+  {:kind :request/params,
+   :hint "Supply a JSON object for params (use {} when empty)."}},
+ :valid {:ok {"id" 7, "method" "engine.commands", "params" {}}}}

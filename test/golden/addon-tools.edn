@@ -1,0 +1,12 @@
+{:default
+ [{:name "photocraft",
+   :description
+   "Catalog PhotoCraft commands, diagnose transport, or call an engine command.",
+   :inputSchema
+   {:type "object",
+    :properties
+    {"command" {:type "string", :enum ["catalog" "doctor" "call"]},
+     "id" {:type ["integer" "string"]},
+     "params" {:type "object"},
+     "engine_command" {:type "string"}},
+    :required ["command"]}}]}

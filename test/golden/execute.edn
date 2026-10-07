@@ -1,0 +1,14 @@
+{:bad-params
+ {:error
+  {:kind :request/params,
+   :hint "Supply a JSON object for params (use {} when empty)."}},
+ :unknown
+ {:error
+  {:kind :command/unknown,
+   :hint
+   "Choose an id listed by catalog; run photocraft catalog to see available commands."}},
+ :valid
+ {:ok
+  {"id" 9,
+   "method" "engine.execute",
+   "params" {"command" "file.new", "params" {}}}}}
