@@ -28,9 +28,9 @@
   "True for exactly 64 ASCII hexadecimal characters (256 bits)."
   [token]
   (and (string? token) (= 64 (count token))
-       (every? #(or (<= (int \0) (int %) (int \9))
-                    (<= (int \a) (int %) (int \f))
-                    (<= (int \A) (int %) (int \F))) token)))
+       (every? #(let [n #?(:cljs (.charCodeAt (str %) 0)
+                          :default (int %))]
+                  (or (<= 48 n 57) (<= 97 n 102) (<= 65 n 70))) token)))
 
 (defn auth
   "Build the first control-channel request. Never log or persist the token."

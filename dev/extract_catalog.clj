@@ -15,31 +15,61 @@
 
 (defn- entries [file]
   (let [text (slurp file)
-        ;; Rust macro invocation: first two positional arguments are string literals.
-        macros (for [[_ id label] (matches "cmd!\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"([^\"]+)\"" text)]
-                 {:id id :label label :params-doc (or (some->> (matches (str "cmd!\\s*\\(\\s*\""
-                        (java.util.regex.Pattern/quote id)
-                        "\".*?\\b(r#+\".*?\"#+|\"\\{[^\"]*\\}\")\\s*,") text)
-                        first second) "See upstream CommandSpec")})
-        structs (for [[_ id label params] (matches
-                        "CommandSpec\\s*\\{\\s*id:\\s*\"([^\"]+)\"\\s*,\\s*label:\\s*\"([^\"]+)\".*?params:\\s*(r#+\".*?\"#+|\"[^\"]*\")\\s*,"
+        source (.getName file)
+        pattern (java.util.regex.Pattern/compile
+                  "(cmd|filter_cmd|style_cmd)!\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"([^\"]+)\""
+                  java.util.regex.Pattern/DOTALL)
+        matcher (.matcher pattern text)
+        macros (loop [out []]
+                 (if (.find matcher)
+                   (let [macro (.group matcher 1)
+                         raw-id (.group matcher 2)
+                         id (if (= macro "style_cmd") (str "layer.layerStyle." raw-id) raw-id)
+                         label (.group matcher 3)
+                         start (.end matcher)
+                         slice (subs text start (min (count text) (+ start 2800)))
+                         ;; Valid Rust raw or ordinary string beginning with {.
+                         ;; Restrict to a single raw-string terminator, not an
+                         ;; arbitrary .*? across unrelated registry entries.
+                         doc (some->> (matches "(r##\"\\{[^#]*?\"##|\"\\{[^\"]*?\")" slice)
+                                      first second)]
+                     (recur (conj out {:id id :label label
+                                       :params-doc (or doc "See upstream CommandSpec")
+                                       :source source})))
+                   out))
+        structs (for [[_ id label] (matches
+                        "CommandSpec\\s*\\{\\s*id:\\s*\"([^\"]+)\"\\s*,\\s*label:\\s*\"([^\"]+)\""
                         text)]
-                  {:id id :label label :params-doc params})]
+                  {:id id :label label :params-doc "See upstream CommandSpec" :source source})]
     (concat macros structs)))
+
+(defn- generated-adjustments [root]
+  (let [text (slurp (io/file root "crates/engine/src/commands.rs"))
+        table (second (str/split text #"const ADJ:" 2))
+        table (first (str/split table #"for &\(kind, label, params\) in ADJ" 2))
+        rows (matches "\\(\\s*\"([A-Za-z]+)\"\\s*,\\s*\"([^\"]+)\"\\s*,\\s*(r#+\".*?\"#+|\"\\{\\}\")" table)]
+    (for [[_ kind label params] rows
+          prefix ["layer.newAdjustmentLayer." "image.adjustments."]]
+      {:id (str prefix kind) :label label :params-doc params :source "commands.rs:ADJ"})))
 
 (defn -main [& [root]]
   (when-not root (throw (ex-info "Pass PhotoCraft source root" {})))
   (let [dir (io/file root "crates/engine/src")
         files (filter #(str/ends-with? (.getName %) ".rs") (file-seq dir))
-        commands (->> files (mapcat entries) (distinct) (sort-by :id) vec)
-        methods ["engine.execute" "engine.commands" "ui.inspect" "ui.set"
-                 "ui.menu.invoke" "ui.menu.list" "ui.dialog.open" "ui.dialog.set"
-                 "ui.dialog.confirm" "ui.dialog.cancel" "ui.dialog.apply"
-                 "ui.window.open" "ui.window.close" "ui.pointer" "ui.key" "ui.type"
-                 "ui.resize" "ui.gpu.simulateLoss" "ui.screenshot" "ui.focus"
-                 "ui.context.choose" "app.open" "app.save" "app.quit"]
-        output {:source "photocraft/crates/engine/src (CommandSpec and cmd! declarations)"
-                :control-source "photocraft/docs/control-protocol.md"
+        commands (->> (concat (mapcat entries files) (generated-adjustments root))
+                      (filter #(str/includes? (:id %) "."))
+                      (sort-by :id)
+                      (reduce (fn [m entry] (update m (:id entry)
+                                                    #(if (and % (not= "See upstream CommandSpec" (:params-doc %)))
+                                                       % entry))) {})
+                      vals (sort-by :id) vec)
+        protocol (slurp (io/file root "crates/ui-egui/src/control.rs"))
+        methods (->> (matches "(?:^|\\s)[`\"]((?:engine|ui|app|jobs)\\.[a-zA-Z.]+)[`\"]" protocol)
+                     (map second)
+                     (filter #(not (str/ends-with? % ".")))
+                     distinct sort vec)
+        output {:source "photocraft/crates/engine/src (CommandSpec, cmd!, filter_cmd!, style_cmd!, ADJ)"
+                :control-source "photocraft/crates/ui-egui/src/control.rs"
                 :commands commands :methods methods}]
     (spit "resources/hive_photocraft/catalog.edn"
           (str ";; Generated by dev/extract_catalog.clj; do not edit by hand.\n"

@@ -1,0 +1,5 @@
+(require '[hive-photocraft.portability :as portability])
+(let [{:keys [passes failures]} (hive-photocraft.portability/run-checks)]
+  (println "cljw portability:" passes "checks," (count failures) "failures")
+  (doseq [failure failures] (println "FAIL" failure))
+  (when (seq failures) (System/exit 1)))

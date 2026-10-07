@@ -6,13 +6,17 @@
 
 (defn- failure [kind hint] {:error {:kind kind :hint hint}})
 
+(defn- codepoint [c]
+  #?(:cljs (.charCodeAt (str c) 0)
+     :default (int c)))
+
 (defn- escape-text [s]
   (apply str (map (fn [c] (case c
                            \" "\\\"" \\ "\\\\" \newline "\\n"
                            \return "\\r" \tab "\\t" \backspace "\\b"
                            \formfeed "\\f"
-                           (if (< (int c) 32)
-                             (let [h "0123456789abcdef" n (int c)]
+                           (if (< (codepoint c) 32)
+                             (let [h "0123456789abcdef" n (codepoint c)]
                                (str "\\u00" (nth h (quot n 16)) (nth h (mod n 16))))
                              (str c)))) s)))
 
@@ -43,10 +47,10 @@
          (failure :json/unsupported "Use finite numbers, arrays, objects with string keys, strings, booleans or null."))))
 
 (defn- ws? [c] (contains? #{\space \newline \return \tab} c))
-(defn- digit? [c] (and c (<= (int \0) (int c) (int \9))))
+(defn- digit? [c] (and c (<= 48 (codepoint c) 57)))
 (defn- hexdigit [c]
   (when c
-    (let [n (int c)]
+    (let [n (codepoint c)]
       (cond (<= 48 n 57) (- n 48)
             (<= 65 n 70) (- n 55)
             (<= 97 n 102) (- n 87)))))
@@ -66,13 +70,13 @@
                                  (if (= e \u)
                                    (let [hex (mapv #(hexdigit (char-at %)) (range (+ j 2) (+ j 6)))]
                                      (when (some nil? hex) (throw (ex-info "Invalid unicode escape" {})))
-                                     (recur (+ j 6) (conj out (char (reduce (fn [a n] (+ (* 16 a) n)) 0 hex)))))
+                                     (recur (+ j 6) (conj out #?(:cljs (js/String.fromCharCode (reduce (fn [a n] (+ (* 16 a) n)) 0 hex)) :default (char (reduce (fn [a n] (+ (* 16 a) n)) 0 hex))))))
                                    (let [escaped (case e
                                                    \" \" \\ \\ \/ \/ \b \backspace \f \formfeed
                                                    \n \newline \r \return \t \tab nil)]
                                      (when-not escaped (throw (ex-info "Invalid escape" {})))
                                      (recur (+ j 2) (conj out escaped)))))
-                    (< (int c) 32) (throw (ex-info "Control character in string" {}))
+                    (< (codepoint c) 32) (throw (ex-info "Control character in string" {}))
                     :else (recur (inc j) (conj out c))))))
             (value-at [i]
               (let [i (skip i) c (char-at i)]
@@ -93,7 +97,7 @@
                               (if (= (char-at j) \]) [out (inc j)]
                                   (let [[v next-i] (value-at j) sep (skip next-i)]
                                     (cond (= (char-at sep) \]) [(conj out v) (inc sep)]
-                                          (= (char-at sep) \,) (recur (skip (inc sep)) (conj out v))
+                                          (= (char-at sep) \,) (do (when (= (char-at (skip (inc sep))) \]) (throw (ex-info "Trailing comma" {}))) (recur (skip (inc sep)) (conj out v)))
                                           :else (throw (ex-info "Expected array separator" {}))))))
                   (= c \t) (if (= "true" (subs s i (min len (+ i 4)))) [true (+ i 4)] (throw (ex-info "Invalid literal" {})))
                   (= c \f) (if (= "false" (subs s i (min len (+ i 5)))) [false (+ i 5)] (throw (ex-info "Invalid literal" {})))
