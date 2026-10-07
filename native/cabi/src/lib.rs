@@ -12,17 +12,17 @@ const DESCRIPTIONS: &[(&str, &str, bool)] = &[
     ("engine.execute", "Execute one registered engine command", false),
     ("jobs.list", "List and apply completed background jobs", false),
     ("jobs.cancel", "Cancel a background job", false),
-    ("engine.commands", "List engine commands, optionally filtered", true),
-    ("session.list", "List open documents and session state", true),
+    ("engine.commands", "List engine commands, optionally filtered", false),
+    ("session.list", "List open documents and session state", false),
     ("doc.open", "Open a document within the granted read root", false),
     ("doc.new", "Create a new document", false),
     ("doc.save", "Save a document within the granted write root", false),
-    ("doc.inspect", "Inspect a document", true),
+    ("doc.inspect", "Inspect a document", false),
     ("doc.render", "Render a document to PNG or write it in the granted root", false),
     ("doc.select", "Select the active document", false),
     ("doc.close", "Close a document", false),
     ("batch", "Run bounded engine commands or methods in order", false),
-    ("methods", "List reference Headless method names", true),
+    ("methods", "List reference Headless method names", false),
 ];
 
 struct Session {
