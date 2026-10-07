@@ -1,0 +1,2 @@
+{:invalid {:error {:kind :input/invalid, :hint "Fix input"}},
+ :missing {:error {:kind :input/missing, :hint "Provide input"}}}

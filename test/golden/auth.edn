@@ -1,0 +1,15 @@
+{:empty
+ {:error
+  {:kind :auth/invalid,
+   :hint
+   "Supply a 64-character hexadecimal control token from the protected token file."}},
+ :missing
+ {:error
+  {:kind :auth/invalid,
+   :hint
+   "Supply a 64-character hexadecimal control token from the protected token file."}},
+ :short
+ {:error
+  {:kind :auth/invalid,
+   :hint
+   "Supply a 64-character hexadecimal control token from the protected token file."}}}

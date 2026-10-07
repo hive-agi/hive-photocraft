@@ -1,0 +1,9 @@
+{:garbage
+ {:error
+  {:kind :json/invalid,
+   :hint "Send a valid JSON value followed by a newline."}},
+ :invalid
+ {:error
+  {:kind :reply/invalid,
+   :hint "Expected a response object with id and boolean ok."}},
+ :ok {:ok {"id" 9, "ok" true}}}

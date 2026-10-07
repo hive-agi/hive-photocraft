@@ -1,0 +1,13 @@
+{:doctor
+ {:ok
+  {:catalog-present? true,
+   :transport-present? false,
+   :version "0.1.0",
+   :hint
+   "No control transport is configured. Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference."}},
+ :unknown
+ {:error
+  {:kind :tool/unknown,
+   :hint "Use photocraft command catalog, doctor, call or control."},
+  :message
+  "Unknown command for `photocraft`: \"surprise\"\n\nAvailable commands:\n  - catalog\n  - doctor\n  - call\n  - control\n\nHINT: Did you mean `control`, `call`, `catalog`?"}}

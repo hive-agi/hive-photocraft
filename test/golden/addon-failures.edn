@@ -1,0 +1,19 @@
+{:absent
+ {:error
+  {:kind :photocraft/unavailable,
+   :hint
+   "Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference."}},
+ :fault
+ {:error
+  {:kind :port/fault,
+   :hint "Injected test failure; inspect the configured transport."}},
+ :params
+ {:error
+  {:kind :request/params,
+   :hint "Supply a JSON object for params (use {} when empty)."}},
+ :unknown
+ {:error
+  {:kind :tool/unknown,
+   :hint "Use photocraft command catalog, doctor, call or control."},
+  :message
+  "Unknown command for `photocraft`: \"surprise\"\n\nAvailable commands:\n  - catalog\n  - doctor\n  - call\n  - control\n\nHINT: Did you mean `control`, `call`, `catalog`?"}}

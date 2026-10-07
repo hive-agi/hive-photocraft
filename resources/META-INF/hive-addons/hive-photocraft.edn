@@ -1,0 +1,14 @@
+{:addon/id "hive.photocraft"
+ :addon/kind :addon
+ :addon/type :native
+ :addon/version "0.1.0"
+ :addon/init-ns "hive-photocraft.addon"
+ :addon/init-fn "addon-ctor"
+ :addon/config {}
+ :addon/capabilities #{:tools :health-reporting}
+ :addon/dependencies #{}
+ :addon/description "PhotoCraft image editing command catalog and portable control codec; transport is injected."
+ :addon/maturity :experimental
+ :addon/license "MIT"
+ :addon/trust-class :foss
+ :addon/lifecycle {:policy :lazy :idle-ms 900000}}

@@ -1,0 +1,20 @@
+{:absent
+ {:result
+  {:error
+   {:kind :photocraft/unavailable,
+    :hint
+    "Supply :transport implementing ControlTransport or :control-port with a :token-ref secret reference."}},
+  :calls []},
+ :call
+ {:result {:ok {"id" 9, "ok" true, "result" {}}},
+  :calls
+  [{"id" 9,
+    "method" "engine.execute",
+    "params" {"command" "file.new", "params" {}}}]},
+ :unknown
+ {:result
+  {:error
+   {:kind :command/unknown,
+    :hint
+    "Choose an id listed by catalog; run photocraft catalog to see available commands."}},
+  :calls []}}

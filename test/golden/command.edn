@@ -1,0 +1,6 @@
+{:known {:ok {:id "file.new", :label "New", :params-doc "{}"}},
+ :unknown
+ {:error
+  {:kind :command/unknown,
+   :hint
+   "Choose an id listed by catalog; run photocraft catalog to see available commands."}}}
