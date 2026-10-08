@@ -10,8 +10,16 @@ name = "photocraft"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-photocraft-automation = { path = "/home/klein/PP/hive/clones-ref/photocraft/crates/automation" }
+photocraft-automation = { git = "https://github.com/storytold/photocraft.git", rev = "47f9306fd06d5dee11acb84b108606f4c867222a" }
 serde_json = "1"
+
+# Size without losing the panic boundary: hive_call relies on catch_unwind,
+# so panic stays "unwind" (never "abort").
+[profile.release]
+strip = true
+lto = "fat"
+codegen-units = 1
+panic = "unwind"
 
 [dev-dependencies]
 base64 = "0.22"

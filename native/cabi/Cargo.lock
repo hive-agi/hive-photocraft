@@ -986,6 +986,7 @@ checksum = "2ee67f1008b1ba2321834326597b8e186293b049a023cdef258527550b9935b4"
 [[package]]
 name = "photocraft-algo"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -997,6 +998,7 @@ dependencies = [
 [[package]]
 name = "photocraft-automation"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "base64",
  "cap-std",
@@ -1029,6 +1031,7 @@ dependencies = [
 [[package]]
 name = "photocraft-cms"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "rayon",
 ]
@@ -1036,6 +1039,7 @@ dependencies = [
 [[package]]
 name = "photocraft-codecs"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "exr",
  "flate2",
@@ -1054,6 +1058,7 @@ dependencies = [
 [[package]]
 name = "photocraft-color"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-cms",
  "serde",
@@ -1062,6 +1067,7 @@ dependencies = [
 [[package]]
 name = "photocraft-compose"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-doc",
@@ -1074,6 +1080,7 @@ dependencies = [
 [[package]]
 name = "photocraft-doc"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -1085,6 +1092,7 @@ dependencies = [
 [[package]]
 name = "photocraft-engine"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "blake3",
  "flate2",
@@ -1113,6 +1121,7 @@ dependencies = [
 [[package]]
 name = "photocraft-format"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "blake3",
  "flate2",
@@ -1130,6 +1139,7 @@ dependencies = [
 [[package]]
 name = "photocraft-geom"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "serde",
 ]
@@ -1137,6 +1147,7 @@ dependencies = [
 [[package]]
 name = "photocraft-io"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "blake3",
  "photocraft-algo",
@@ -1160,6 +1171,7 @@ dependencies = [
 [[package]]
 name = "photocraft-ops"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-doc",
 ]
@@ -1167,6 +1179,7 @@ dependencies = [
 [[package]]
 name = "photocraft-paint"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -1177,6 +1190,7 @@ dependencies = [
 [[package]]
 name = "photocraft-plugins"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -1191,6 +1205,7 @@ dependencies = [
 [[package]]
 name = "photocraft-psd"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "flate2",
  "thiserror",
@@ -1199,6 +1214,7 @@ dependencies = [
 [[package]]
 name = "photocraft-raster"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -1208,6 +1224,7 @@ dependencies = [
 [[package]]
 name = "photocraft-raw"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "rayon",
 ]
@@ -1215,6 +1232,7 @@ dependencies = [
 [[package]]
 name = "photocraft-text"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "flate2",
  "parley",
@@ -1229,6 +1247,7 @@ dependencies = [
 [[package]]
 name = "photocraft-vector"
 version = "0.3.0"
+source = "git+https://github.com/storytold/photocraft.git?rev=47f9306fd06d5dee11acb84b108606f4c867222a#47f9306fd06d5dee11acb84b108606f4c867222a"
 dependencies = [
  "photocraft-color",
  "photocraft-doc",
