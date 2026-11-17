@@ -43,7 +43,7 @@ fn metadata_and_every_reference_method() {
     assert_eq!(caps["value"]["library"], "photocraft");
     assert_eq!(
         caps["value"]["reference"],
-        "47f9306fd06d5dee11acb84b108606f4c867222a"
+        "01b79958a7b73c3d840b76492069e9635f9f7394"
     );
 }
 
