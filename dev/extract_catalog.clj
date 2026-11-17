@@ -82,8 +82,16 @@
                     out))]
     (concat macros structs)))
 
+(defn- adjustments-file
+  "The engine file holding the ADJ table: commands.rs, renamed upstream to cmd.rs
+   (photocraft 27d363423, 2026-10-26)."
+  [root]
+  (or (first (filter #(.isFile %) (map #(io/file root "crates/engine/src" %) ["cmd.rs" "commands.rs"])))
+      (throw (ex-info "No ADJ table file (cmd.rs or commands.rs) in crates/engine/src" {:root root}))))
+
 (defn- generated-adjustments [root]
-  (let [text (slurp (io/file root "crates/engine/src/commands.rs"))
+  (let [file (adjustments-file root)
+        text (slurp file)
         from (locate text "const ADJ:" 0)
         to (when from (locate text "for &(kind, label, params) in ADJ" from))
         table (subs text (+ from (count "const ADJ:")) to)
@@ -109,7 +117,7 @@
                  out))]
     (for [[kind label params] rows
           prefix ["layer.newAdjustmentLayer." "image.adjustments."]]
-      {:id (str prefix kind) :label label :params-doc params :source "commands.rs:ADJ"})))
+      {:id (str prefix kind) :label label :params-doc params :source (str (.getName file) ":ADJ")})))
 
 (defn- control-methods [text]
   (->> ["engine." "ui." "app." "jobs."]
@@ -142,8 +150,18 @@
                                                     #(if (and % (not= "See upstream CommandSpec" (:params-doc %)))
                                                        % entry))) {})
                       vals (sort-by :id) vec)
-        protocol (slurp (io/file root "crates/ui-egui/src/control.rs"))
+        ;; control.rs was split upstream into a control/ module; read all non-test parts.
+        control-dir (io/file root "crates/ui-egui/src/control")
+        protocol (str/join "\n" (map slurp (concat [(io/file root "crates/ui-egui/src/control.rs")]
+                                                   (when (.isDirectory control-dir)
+                                                     (->> (file-seq control-dir)
+                                                          (filter #(and (.isFile %)
+                                                                        (str/ends-with? (.getName %) ".rs")
+                                                                        (not (str/includes? (.getName %) "test"))))
+                                                          (sort-by #(.getPath %)))))))
         methods (control-methods protocol)
+        _ (when (or (empty? commands) (empty? methods))
+            (throw (ex-info "Incomplete extraction" {:commands (count commands) :methods (count methods)})))
         output {:source "photocraft/crates/engine/src (CommandSpec, cmd!, filter_cmd!, style_cmd!, ADJ)"
                 :control-source "photocraft/crates/ui-egui/src/control.rs"
                 :commands commands :methods methods}]
