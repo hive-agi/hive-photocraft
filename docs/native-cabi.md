@@ -1,6 +1,6 @@
 # Photocraft native C ABI
 
-The Rust crate `native/cabi` exposes the GUI-free `photocraft_automation::Headless` through the shared Hive JSON ABI. The reference is the read-only checkout `/home/klein/PP/hive/clones-ref/photocraft`, commit `47f9306fd06d5dee11acb84b108606f4c867222a`. The method registry is `photocraft_automation::rpc::METHODS` in `crates/automation/src/rpc.rs`. The shim verifies its descriptions against that registry before answering `ops`. The 500+ engine commands remain data behind `engine.commands` and `engine.execute`, not separate C operations.
+The Rust crate `native/cabi` exposes the GUI-free `photocraft_automation::Headless` through the shared Hive JSON ABI. The reference is `storytold/photocraft` commit `01b79958a7b73c3d840b76492069e9635f9f7394`, pinned as a git dependency in `native/cabi/Cargo.toml`. The method registry is `photocraft_automation::rpc::METHODS` in `crates/automation/src/rpc.rs`. The shim verifies its descriptions against that registry before answering `ops`. The 500+ engine commands remain data behind `engine.commands` and `engine.execute`, not separate C operations.
 
 ```c
 char *hive_call(const char *op, const char *request_json);
@@ -25,8 +25,13 @@ The first Headless call lazily creates one session per process. Calls are serial
 | engine.commands | List engine commands, optionally filtered | no |
 | session.list | List open documents and session state | no |
 | doc.open | Open a document within the granted read root | no |
+| doc.place | Place an image from the granted read root as a layer | no |
+| doc.replaceSmartObject | Replace smart object contents from the granted read root | no |
 | doc.new | Create a new document | no |
 | doc.save | Save a document within the granted write root | no |
+| doc.exportLayers | Export layers as files into the granted write root | no |
+| doc.exportDataSets | Export variable data sets into the granted write root | no |
+| doc.importDataSets | Import variable data sets from a CSV in the granted read root | no |
 | doc.inspect | Inspect a document | no |
 | doc.render | Render a document to PNG or write it in the granted root | no |
 | doc.select | Select the active document | no |
@@ -34,7 +39,7 @@ The first Headless call lazily creates one session per process. Calls are serial
 | batch | Run bounded engine commands or methods in order | no |
 | methods | List reference Headless method names | no |
 
-`capabilities` returns `{ "library":"photocraft", "version":"0.1.0", "reference":"47f9306fd06d5dee11acb84b108606f4c867222a" }`.
+`capabilities` returns `{ "library":"photocraft", "version":"0.1.0", "reference":"01b79958a7b73c3d840b76492069e9635f9f7394" }`.
 
 ## Build and test
 
@@ -44,6 +49,8 @@ CARGO_BUILD_JOBS=4 CARGO_TARGET_DIR=$HOME/.cache/hive-craft-target/photocraft ca
 CARGO_BUILD_JOBS=4 CARGO_TARGET_DIR=$HOME/.cache/hive-craft-target/photocraft cargo test -- --nocapture
 ```
 
-The `cargo build --lib` step creates the cdylib before the test's required `dlopen`/`dlsym` smoke. The Rust tests call both exported symbols, check every advertised operation, reject bad input, verify a write grant and traversal refusal through the loaded cdylib, then create a 40×20 document, execute three commands, render a PNG, and verify its signature and IHDR dimensions. Measured on this host (debug, 2026-10-07): **16 operations**, **4 integration tests passing**, end-to-end document flow **35 ms** (a concurrent run measured 113 ms). Artifact: `$HOME/.cache/hive-craft-target/photocraft/debug/libphotocraft.so`, **443,768,504 bytes** (unstripped debug build). The reference crate is an absolute path dependency, so another machine must check out the pinned reference at the same path or adjust the local manifest path before building; this repo does not vendor or modify the reference.
+The `cargo build --lib` step creates the cdylib before the test's required `dlopen`/`dlsym` smoke. The Rust tests call both exported symbols, check every advertised operation, reject bad input, verify a write grant and traversal refusal through the loaded cdylib, then create a 40×20 document, execute three commands, render a PNG, and verify its signature and IHDR dimensions. Measured on this host (debug, 2026-11-17, reference 01b7995): **21 operations**, **4 integration tests passing**, end-to-end document flow **29 ms**. Artifact: `<CARGO_TARGET_DIR>/debug/libphotocraft.so`, **309,836,384 bytes** (debug build with `CARGO_PROFILE_DEV_DEBUG=0`). (2026-10-07 at 47f9306: 16 operations, 35 ms, 443,768,504 bytes with debug info.)
+
+Upstream's workspace `[patch.crates-io]` table (storytold egui/winit forks and the craft-libs Hayro trees) does not propagate to a downstream crate, so `native/cabi/Cargo.toml` mirrors it verbatim and `Cargo.lock` is seeded from upstream's lock. Re-sync both on every rev bump. To build from a local clone instead of GitHub, set `CARGO_NET_GIT_FETCH_WITH_CLI=true` with a git `url.file:///path/to/photocraft.insteadOf=https://github.com/storytold/photocraft.git` override; this repo does not vendor or modify the reference.
 
 This wave provides only the native library. The hive-spi native port and JVM FFM/cljrs transport belong to the later integration wave; no Clojure adapter is included here.

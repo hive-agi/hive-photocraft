@@ -35,10 +35,35 @@ const DESCRIPTIONS: &[(&str, &str, bool)] = &[
         "Open a document within the granted read root",
         false,
     ),
+    (
+        "doc.place",
+        "Place an image from the granted read root as a layer",
+        false,
+    ),
+    (
+        "doc.replaceSmartObject",
+        "Replace smart object contents from the granted read root",
+        false,
+    ),
     ("doc.new", "Create a new document", false),
     (
         "doc.save",
         "Save a document within the granted write root",
+        false,
+    ),
+    (
+        "doc.exportLayers",
+        "Export layers as files into the granted write root",
+        false,
+    ),
+    (
+        "doc.exportDataSets",
+        "Export variable data sets into the granted write root",
+        false,
+    ),
+    (
+        "doc.importDataSets",
+        "Import variable data sets from a CSV in the granted read root",
         false,
     ),
     ("doc.inspect", "Inspect a document", false),
@@ -99,7 +124,7 @@ fn run(op: &str, request: Value) -> Result<Value, String> {
     }
     match op {
         "capabilities" => Ok(
-            json!({"library": "photocraft", "version": env!("CARGO_PKG_VERSION"), "reference": "47f9306fd06d5dee11acb84b108606f4c867222a"}),
+            json!({"library": "photocraft", "version": env!("CARGO_PKG_VERSION"), "reference": "01b79958a7b73c3d840b76492069e9635f9f7394"}),
         ),
         "ops" => {
             if DESCRIPTIONS.len() != METHODS.len()
